@@ -139,15 +139,13 @@ main.content {
         font-size: 2rem;
     }
 
-    // Entity type colors
-    &.biomarker { border-left-color: #4CAF50; }
-    &.drug { border-left-color: #2196F3; }
-    &.supplement { border-left-color: #9C27B0; }
-    &.condition { border-left-color: #FF9800; }
-    &.intervention { border-left-color: #00BCD4; }
-    &.protein { border-left-color: #3F51B5; }
-    &.hormone { border-left-color: #E91E63; }
-    &.organ { border-left-color: #795548; }
+    // Entity type colors (Learning-focused)
+    &.concept { border-left-color: #3B82F6; }
+    &.course { border-left-color: #F59E0B; }
+    &.skill { border-left-color: #EAB308; }
+    &.resource { border-left-color: #22C55E; }
+    &.question { border-left-color: #8B5CF6; }
+    &.insight { border-left-color: #EC4899; }
 
     .entity-card-content {
         display: flex;
@@ -191,13 +189,13 @@ main.content {
         }
     }
 
-    // Entity type colors
-    &.biomarker { border-left-color: #4CAF50; }
-    &.drug { border-left-color: #2196F3; }
-    &.supplement { border-left-color: #9C27B0; }
-    &.condition { border-left-color: #FF9800; }
-    &.intervention { border-left-color: #00BCD4; }
-    &.protein { border-left-color: #3F51B5; }
+    // Entity type colors (Learning-focused)
+    &.concept { border-left-color: #3B82F6; }
+    &.course { border-left-color: #F59E0B; }
+    &.skill { border-left-color: #EAB308; }
+    &.resource { border-left-color: #22C55E; }
+    &.question { border-left-color: #8B5CF6; }
+    &.insight { border-left-color: #EC4899; }
 }
 
 // =============================================================================

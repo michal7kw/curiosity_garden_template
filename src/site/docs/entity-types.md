@@ -3,239 +3,188 @@ layout: layouts/note.njk
 dg-publish: true
 dg-home: false
 title: Entity Types Reference
-description: Complete reference for all medical entity types in the knowledge garden
+description: Complete reference for all learning entity types in the Curiosity Garden
 permalink: /docs/entity-types/
 tags:
   - documentation
   - reference
   - entity-types
 created: 2026-01-30
-updated: 2026-01-30
+updated: 2026-01-31
 ---
 
 # Entity Types Reference
 
-This knowledge garden organizes medical information into distinct entity types. Each type represents a category of medical knowledge with specific properties and relationships.
+The Curiosity Garden organizes learning content into six distinct entity types. Each type represents a category of knowledge with specific properties and relationships, designed to help you explore ideas, track skills, and capture insights.
 
 ## Entity Type Overview
 
-| Type | Color | Folder | Description |
-|------|-------|--------|-------------|
-| Biomarker | 🟢 Green | `entities/biomarker/` | Measurable health indicators |
-| Drug | 🔵 Blue | `entities/drug/` | Pharmaceutical medications |
-| Supplement | 🟣 Purple | `entities/supplement/` | Nutritional supplements |
-| Condition | 🟠 Orange | `entities/condition/` | Health conditions & diseases |
-| Intervention | 🔵 Cyan | `entities/intervention/` | Treatments & lifestyle changes |
-| Hormone | 🔴 Pink | `entities/hormone/` | Hormones & signaling molecules |
-| Organ | 🟤 Brown | `entities/organ/` | Body organs & systems |
-| Metabolite | ⚫ Gray | `entities/metabolite/` | Metabolic compounds |
-| Gene | 🟢 Light Green | `entities/gene/` | Genetic elements |
-| Protein | 🔵 Indigo | `entities/protein/` | Protein molecules |
-
-[[consolidate data schema across MKG modules]]
+| Type | Color | Icon | Folder | Description |
+|------|-------|------|--------|-------------|
+| Concept | Blue | 💡 | `entities/concept/` | Core ideas and mental models |
+| Course | Orange | 🎓 | `entities/course/` | Learning journeys and curricula |
+| Skill | Yellow | 🎯 | `entities/skill/` | Abilities to develop and track |
+| Resource | Green | 📚 | `entities/resource/` | Books, articles, and materials |
+| Question | Purple | ❓ | `entities/question/` | Open inquiries and research gaps |
+| Insight | Pink | ✨ | `entities/insight/` | Aha moments and realizations |
 
 ---
 
-## Biomarker 🧪
+## Concept 💡
 
-**Purpose**: Track measurable indicators of health status
+**Purpose**: Document core ideas, mental models, and foundational knowledge
 
 **Common Properties**:
-- Reference ranges (normal, optimal, concerning)
-- Unit of measurement
-- Testing methods
-- Frequency of testing
+- Core definition
+- Related concepts
+- Real-world applications
+- Common misconceptions
+- Learning prerequisites
 
 **Examples**:
-- Glucose (blood sugar)
-- Cholesterol (LDL, HDL)
-- Hemoglobin A1c
-- Vitamin D levels
-- Thyroid hormones (TSH, T3, T4)
+- Machine Learning
+- First Principles Thinking
+- Compound Interest
+- Object-Oriented Programming
+- Growth Mindset
 
 **Relationships**:
-- Measured by → Lab tests
-- Indicates → Conditions
-- Affected by → Supplements, Drugs, Interventions
+- Prerequisite for → Skills, Courses
+- Related to → Other Concepts
+- Explored in → Resources
+- Leads to → Insights
 
 ---
 
-## Drug 💊
+## Course 🎓
 
-**Purpose**: Document pharmaceutical medications
+**Purpose**: Track learning journeys, curricula, and structured educational paths
 
 **Common Properties**:
-- Drug class
-- Mechanism of action
-- Dosage information
-- Side effects
-- Interactions
+- Duration/time commitment
+- Difficulty level
+- Learning objectives
+- Prerequisites
+- Progress status
+- Provider/platform
 
 **Examples**:
-- Metformin
-- Atorvastatin
-- Levothyroxine
-- Aspirin
-- Lisinopril
+- CS50: Introduction to Computer Science
+- The Feynman Lectures on Physics
+- Deep Learning Specialization
+- Data Structures and Algorithms
+- Creative Writing Workshop
 
 **Relationships**:
-- Treats → Conditions
-- Interacts with → Other drugs, Supplements
-- Affects → Biomarkers
+- Teaches → Concepts, Skills
+- Requires → Prerequisites
+- Uses → Resources
+- Builds on → Other Courses
 
 ---
 
-## Supplement 🌿
+## Skill 🎯
 
-**Purpose**: Document nutritional and herbal supplements
+**Purpose**: Track abilities you want to develop, practice, and master
 
 **Common Properties**:
-- Recommended dosage
-- Forms available
-- Absorption factors
-- Quality considerations
-- Evidence level
+- Current proficiency level
+- Practice frequency
+- Learning milestones
+- Assessment criteria
+- Time invested
 
 **Examples**:
-- Vitamin D
-- Omega-3 fatty acids
-- Magnesium
-- Ashwagandha
-- Curcumin
+- Python Programming
+- Public Speaking
+- Data Visualization
+- Technical Writing
+- System Design
 
 **Relationships**:
-- Supports → Organs, Functions
-- May help with → Conditions
-- Affects → Biomarkers
-- Interacts with → Drugs
+- Built from → Concepts
+- Developed through → Courses
+- Practiced with → Resources
+- Leads to → Insights
 
 ---
 
-## Condition 🏥
+## Resource 📚
 
-**Purpose**: Document health conditions and diseases
+**Purpose**: Catalog books, articles, videos, tools, and learning materials
 
 **Common Properties**:
-- Symptoms
-- Risk factors
-- Diagnostic criteria
-- Treatment options
-- Prevention strategies
+- Resource type (book, video, article, tool)
+- Author/creator
+- URL/location
+- Reading/viewing status
+- Key takeaways
+- Rating
 
 **Examples**:
-- Type 2 Diabetes
-- Hypertension
-- Hypothyroidism
-- Metabolic syndrome
-- Osteoporosis
+- "Thinking, Fast and Slow" by Daniel Kahneman
+- 3Blue1Brown YouTube Channel
+- Official Python Documentation
+- Anki Flashcard App
+- "The Pragmatic Programmer" by Hunt & Thomas
 
 **Relationships**:
-- Indicated by → Biomarkers
-- Treated by → Drugs, Interventions
-- May benefit from → Supplements
-- Affects → Organs
+- Teaches → Concepts
+- Develops → Skills
+- Answers → Questions
+- Inspires → Insights
 
 ---
 
-## Intervention ⚕️
+## Question ❓
 
-**Purpose**: Document treatments and lifestyle modifications
+**Purpose**: Capture open inquiries, research gaps, and things you want to understand
 
 **Common Properties**:
-- Type (lifestyle, procedure, therapy)
-- Evidence level
-- Implementation steps
-- Expected outcomes
-- Considerations
+- Question category
+- Priority/importance
+- Status (open, exploring, answered)
+- Related research
+- Partial answers
 
 **Examples**:
-- Intermittent fasting
-- Exercise protocols
-- Sleep optimization
-- Stress management
-- Dietary modifications
+- How does spaced repetition work?
+- What are the limits of neural networks?
+- Why do some habits stick and others don't?
+- How can I improve my writing clarity?
+- What makes effective teaching effective?
 
 **Relationships**:
-- Helps with → Conditions
-- Improves → Biomarkers
-- Supports → Organ function
+- About → Concepts
+- Answered by → Resources, Insights
+- Leads to → New Questions
+- Motivates → Learning Courses
 
 ---
 
-## Hormone 🧬
+## Insight ✨
 
-**Purpose**: Document hormones and signaling molecules
-
-**Common Properties**:
-- Source organ/gland
-- Target tissues
-- Functions
-- Regulation
-- Testing considerations
-
-**Examples**:
-- Insulin
-- Cortisol
-- Testosterone
-- Estrogen
-- Thyroid hormones
-
-**Relationships**:
-- Produced by → Organs
-- Affects → Metabolism, Biomarkers
-- Influenced by → Drugs, Supplements
-- Related to → Conditions
-
----
-
-## Organ 🫀
-
-**Purpose**: Document body organs and systems
+**Purpose**: Capture aha moments, realizations, and personal discoveries
 
 **Common Properties**:
-- Location
-- Functions
-- Associated biomarkers
-- Common conditions
-- Supporting interventions
+- Date of insight
+- Context/trigger
+- Confidence level
+- Supporting evidence
+- Applications
 
 **Examples**:
-- Liver
-- Heart
-- Thyroid
-- Pancreas
-- Kidneys
+- Connection between sleep and memory consolidation
+- Why debugging is harder than coding
+- The power of teaching to learn
+- Pattern recognition in problem-solving
+- Writing clarifies thinking
 
 **Relationships**:
-- Produces → Hormones
-- Affected by → Conditions
-- Supported by → Supplements, Interventions
-- Indicated by → Biomarkers
-
----
-
-## Metabolite ⚙️
-
-**Purpose**: Document metabolic compounds and byproducts
-
-**Common Properties**:
-- Metabolic pathway
-- Source
-- Function
-- Reference ranges
-- Clinical significance
-
-**Examples**:
-- Uric acid
-- Bilirubin
-- Creatinine
-- Homocysteine
-- Lactate
-
-**Relationships**:
-- Produced by → Metabolism
-- Indicates → Organ function
-- Affected by → Diet, Drugs
+- Derived from → Concepts, Resources
+- Answers → Questions
+- Applies to → Skills
+- Connects → Multiple Concepts
 
 ---
 
@@ -261,7 +210,7 @@ last_modified: YYYY-MM-DD
 | Field | Description |
 |-------|-------------|
 | `dg-publish` | Set to `true` to publish |
-| `dg-entity-type` | One of the types above |
+| `dg-entity-type` | One of: concept, course, skill, resource, question, insight |
 | `name` | Display name |
 
 ### Recommended Fields
@@ -272,6 +221,8 @@ last_modified: YYYY-MM-DD
 | `tags` | Relevant topic tags |
 | `created` | Creation date |
 | `last_modified` | Last update date |
+| `difficulty` | beginner, intermediate, or advanced |
+| `status` | exploring, learning, practicing, or mastered |
 
 ## Entity Relationships
 
@@ -280,9 +231,20 @@ Entities connect through wiki links:
 ```markdown
 ## Related Entities
 
-- [[Vitamin D]] - Supports calcium absorption
-- [[Bone Health]] - Primary function
-- [[Osteoporosis]] - Deficiency risk
+- [[Machine Learning]] - Core concept
+- [[Python Programming]] - Required skill
+- [[Deep Learning Specialization]] - Recommended course
 ```
 
 These links create the knowledge graph connections visible in the sidebar.
+
+## Color Coding
+
+The visual color coding helps you quickly identify entity types:
+
+- **Blue (Concept)**: The "what" - core ideas to understand
+- **Orange (Course)**: The "how" - structured paths to learn
+- **Yellow (Skill)**: The "doing" - abilities to practice
+- **Green (Resource)**: The "where" - materials to study
+- **Purple (Question)**: The "why" - inquiries to explore
+- **Pink (Insight)**: The "aha" - discoveries to remember

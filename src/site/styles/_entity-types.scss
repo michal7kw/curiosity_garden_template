@@ -1,58 +1,28 @@
 // Entity Type Styling
-// Color-coded styling for different medical entity types
-// Matches MKG_Web color palette for consistency
+// Color-coded styling for different learning entity types
+// Curiosity Garden color palette for learning content
 
 // =============================================================================
 // Entity Color Palette
 // =============================================================================
 
 $entity-colors: (
-  biomarker: #4CAF50,      // Green
-  drug: #2196F3,           // Blue
-  supplement: #9C27B0,     // Purple
-  condition: #FF9800,      // Orange
-  intervention: #00BCD4,   // Cyan
-  hormone: #E91E63,        // Pink
-  organ: #795548,          // Brown
-  metabolite: #607D8B,     // Blue-gray
-  gene: #8BC34A,           // Light green
-  protein: #3F51B5,        // Indigo
-  neurotransmitter: #FF5722, // Deep orange
-  cellularcomponent: #009688, // Teal
-  // Additional entity types from curated_kg
-  clinicalpattern: #FF7043, // Deep orange (lighter)
-  cognitivefunction: #7E57C2, // Deep purple
-  examination: #26A69A,    // Teal (lighter)
-  labtest: #42A5F5,        // Blue (lighter)
-  labtestpanel: #5C6BC0,   // Indigo (lighter)
-  pathway: #66BB6A,        // Green (lighter)
-  phenotype: #AB47BC,      // Purple
-  research: #78909C        // Blue-gray (lighter)
+  concept: #3B82F6,        // Blue - Core ideas and mental models
+  course: #F59E0B,         // Orange - Learning journeys and curricula
+  skill: #EAB308,          // Yellow - Abilities to develop
+  resource: #22C55E,       // Green - Books, articles, materials
+  question: #8B5CF6,       // Purple - Open inquiries
+  insight: #EC4899         // Pink - Aha moments and realizations
 );
 
 // Entity icons using emoji
 $entity-icons: (
-  biomarker: "🧪",
-  drug: "💊",
-  supplement: "🌿",
-  condition: "🏥",
-  intervention: "⚕️",
-  hormone: "🧬",
-  organ: "🫀",
-  metabolite: "⚙️",
-  gene: "🧬",
-  protein: "🔬",
-  neurotransmitter: "⚡",
-  cellularcomponent: "🔬",
-  // Additional entity types from curated_kg
-  clinicalpattern: "📊",
-  cognitivefunction: "🧠",
-  examination: "🩺",
-  labtest: "🔬",
-  labtestpanel: "📋",
-  pathway: "🔀",
-  phenotype: "👤",
-  research: "📚"
+  concept: "💡",
+  course: "🎓",
+  skill: "🎯",
+  resource: "📚",
+  question: "❓",
+  insight: "✨"
 );
 
 // =============================================================================
@@ -295,25 +265,30 @@ $entity-icons: (
       transform: translateY(-1px);
     }
 
-    // Specific database colors
-    &.pubchem:hover {
-      border-color: #5c6bc0;
-      color: #5c6bc0;
+    // Specific resource link colors
+    &.wikipedia:hover {
+      border-color: #636363;
+      color: #636363;
     }
 
-    &.drugbank:hover {
-      border-color: #26a69a;
-      color: #26a69a;
+    &.youtube:hover {
+      border-color: #FF0000;
+      color: #FF0000;
     }
 
-    &.pubmed:hover {
-      border-color: #e91e63;
-      color: #e91e63;
+    &.goodreads:hover {
+      border-color: #553B08;
+      color: #553B08;
     }
 
-    &.doi:hover {
-      border-color: #ff9800;
-      color: #ff9800;
+    &.github:hover {
+      border-color: #6e5494;
+      color: #6e5494;
+    }
+
+    &.url:hover {
+      border-color: #3B82F6;
+      color: #3B82F6;
     }
   }
 
@@ -900,22 +875,12 @@ $entity-icons: (
 // Dark theme adjustments
 .theme-dark {
   .entity-badge {
-    &.biomarker { background-color: darken(#4CAF50, 10%); }
-    &.drug { background-color: darken(#2196F3, 10%); }
-    &.supplement { background-color: darken(#9C27B0, 10%); }
-    &.condition { background-color: darken(#FF9800, 10%); }
-    &.intervention { background-color: darken(#00BCD4, 10%); }
-    &.hormone { background-color: darken(#E91E63, 10%); }
-    &.organ { background-color: darken(#795548, 10%); }
-    // Additional entity types from curated_kg
-    &.clinicalpattern { background-color: darken(#FF7043, 10%); }
-    &.cognitivefunction { background-color: darken(#7E57C2, 10%); }
-    &.examination { background-color: darken(#26A69A, 10%); }
-    &.labtest { background-color: darken(#42A5F5, 10%); }
-    &.labtestpanel { background-color: darken(#5C6BC0, 10%); }
-    &.pathway { background-color: darken(#66BB6A, 10%); }
-    &.phenotype { background-color: darken(#AB47BC, 10%); }
-    &.research { background-color: darken(#78909C, 10%); }
+    &.concept { background-color: darken(#3B82F6, 10%); }
+    &.course { background-color: darken(#F59E0B, 10%); }
+    &.skill { background-color: darken(#EAB308, 10%); }
+    &.resource { background-color: darken(#22C55E, 10%); }
+    &.question { background-color: darken(#8B5CF6, 10%); }
+    &.insight { background-color: darken(#EC4899, 10%); }
   }
 }
 

@@ -17,28 +17,14 @@
 {% set size = badgeSize | default('normal') %}
 {% set style = badgeStyle | default('filled') %}
 
-{# Entity type icons #}
+{# Entity type icons (Learning-focused) #}
 {% set entityIcons = {
-  'biomarker': '🧪',
-  'drug': '💊',
-  'supplement': '🌿',
-  'condition': '🏥',
-  'intervention': '⚕️',
-  'hormone': '🧬',
-  'organ': '🫀',
-  'metabolite': '⚙️',
-  'gene': '🧬',
-  'protein': '🔬',
-  'neurotransmitter': '⚡',
-  'cellularcomponent': '🔬',
-  'clinicalpattern': '📊',
-  'cognitivefunction': '🧠',
-  'examination': '🩺',
-  'labtest': '🔬',
-  'labtestpanel': '📋',
-  'pathway': '🔀',
-  'phenotype': '👤',
-  'research': '📚'
+  'concept': '💡',
+  'course': '🎓',
+  'skill': '🎯',
+  'resource': '📚',
+  'question': '❓',
+  'insight': '✨'
 } %}
 
 {% if type %}

@@ -99,18 +99,12 @@ dg-entity-type: supplement
 ```
 
 **Valid values**:
-- `biomarker`
-- `drug`
-- `supplement`
-- `condition`
-- `intervention`
-- `hormone`
-- `organ`
-- `metabolite`
-- `gene`
-- `protein`
-
-[[think about possible expansions of this list]]
+- `concept` - Core ideas and mental models
+- `course` - Learning journeys and curricula
+- `skill` - Abilities to develop
+- `resource` - Books, articles, materials
+- `question` - Open inquiries
+- `insight` - Aha moments and realizations
 ### id
 
 **Type**: String
@@ -326,29 +320,31 @@ banner: "https://example.com/banner.jpg"
 
 ## Complete Example
 
-Here's a complete frontmatter example for a supplement entity:
+Here's a complete frontmatter example for a concept entity:
 
 ```yaml
 ---
 dg-publish: true
-dg-entity-type: supplement
+dg-entity-type: concept
 dg-show-toc: true
-id: vitamin-d-001
-name: "Vitamin D"
-title: "Vitamin D: The Sunshine Vitamin"
-description: "Essential fat-soluble vitamin for bone health, immune function, and overall wellness"
+id: machine-learning-001
+name: "Machine Learning"
+title: "Machine Learning: Teaching Computers to Learn"
+description: "A branch of AI where systems learn patterns from data to make predictions or decisions"
 tags:
-  - vitamin
-  - fat-soluble
-  - bone-health
-  - immune-system
-  - sunlight
+  - artificial-intelligence
+  - data-science
+  - algorithms
+  - automation
+difficulty: intermediate
+status: learning
+wikipedia_url: "https://en.wikipedia.org/wiki/Machine_learning"
 created: 2025-01-02
 last_modified: 2025-01-02
-noteIcon: "🌞"
+noteIcon: "🤖"
 ---
 
-# Vitamin D
+# Machine Learning
 
 Content starts here...
 ```

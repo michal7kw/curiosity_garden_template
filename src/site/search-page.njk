@@ -24,9 +24,9 @@ eleventyExcludeFromCollections: true
   <div class="search-tips">
     <h3>Search Tips</h3>
     <ul>
-      <li>Search by entity name (e.g., "Vitamin D", "Metformin")</li>
-      <li>Search by entity type (e.g., "supplement", "drug", "condition")</li>
-      <li>Search by tag using # (e.g., "#bone-health")</li>
+      <li>Search by entity name (e.g., "Machine Learning", "Python")</li>
+      <li>Search by entity type (e.g., "concept", "course", "skill")</li>
+      <li>Search by tag using # (e.g., "#programming")</li>
       <li>Use partial matches for broader results</li>
     </ul>
   </div>
@@ -94,16 +94,14 @@ eleventyExcludeFromCollections: true
     console.error('Search index error:', err);
   }
 
-  // Entity type colors
+  // Entity type colors (Learning-focused)
   const entityTypeColors = {
-    biomarker: '#4CAF50',
-    drug: '#2196F3',
-    supplement: '#9C27B0',
-    condition: '#FF9800',
-    intervention: '#00BCD4',
-    hormone: '#E91E63',
-    organ: '#795548',
-    protein: '#3F51B5',
+    concept: '#3B82F6',     // Blue
+    course: '#F59E0B',      // Orange
+    skill: '#EAB308',       // Yellow
+    resource: '#22C55E',    // Green
+    question: '#8B5CF6',    // Purple
+    insight: '#EC4899',     // Pink
     default: '#888888'
   };
 

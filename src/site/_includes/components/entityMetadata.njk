@@ -16,11 +16,13 @@
   - source: Data source
 
   Optional enhanced fields:
-  - evidence_level: Numeric evidence level (0-5)
-  - confidence_score: Confidence value (0.0-1.0)
-  - pubchem_id: PubChem compound ID
-  - drugbank_id: DrugBank drug ID
-  - pmid: PubMed ID
+  - difficulty: Difficulty level (beginner, intermediate, advanced)
+  - status: Learning status (exploring, learning, practicing, mastered)
+  - wikipedia_url: Wikipedia article URL
+  - youtube_url: YouTube video URL
+  - goodreads_url: Goodreads book URL
+  - github_url: GitHub repository URL
+  - url: Generic URL
 
   Privacy fields (NEVER displayed):
   - element_id, primekg_element_id, isPersonal, needs_review, last_sync
@@ -35,36 +37,23 @@
 {% set createdDate = page.data.created or created %}
 {% set modifiedDate = page.data.last_modified or page.data.updated or updated %}
 
-{# Enhanced fields #}
-{% set evidenceLevel = page.data.evidence_level %}
-{% set confidenceScore = page.data.confidence_score %}
-{% set pubchemId = page.data.pubchem_id %}
-{% set drugbankId = page.data.drugbank_id %}
-{% set pmid = page.data.pmid %}
-{% set doi = page.data.doi %}
+{# Enhanced fields for learning content #}
+{% set difficulty = page.data.difficulty %}
+{% set status = page.data.status %}
+{% set wikipediaUrl = page.data.wikipedia_url %}
+{% set youtubeUrl = page.data.youtube_url %}
+{% set goodreadsUrl = page.data.goodreads_url %}
+{% set githubUrl = page.data.github_url %}
+{% set genericUrl = page.data.url %}
 
-{# Entity icons #}
+{# Entity icons (Learning-focused) #}
 {% set entityIcons = {
-  'biomarker': '🧪',
-  'drug': '💊',
-  'supplement': '🌿',
-  'condition': '🏥',
-  'intervention': '⚕️',
-  'hormone': '🧬',
-  'organ': '🫀',
-  'metabolite': '⚙️',
-  'gene': '🧬',
-  'protein': '🔬',
-  'neurotransmitter': '⚡',
-  'cellularcomponent': '🔬',
-  'clinicalpattern': '📊',
-  'cognitivefunction': '🧠',
-  'examination': '🩺',
-  'labtest': '🔬',
-  'labtestpanel': '📋',
-  'pathway': '🔀',
-  'phenotype': '👤',
-  'research': '📚'
+  'concept': '💡',
+  'course': '🎓',
+  'skill': '🎯',
+  'resource': '📚',
+  'question': '❓',
+  'insight': '✨'
 } %}
 
 {% if type %}
@@ -130,27 +119,28 @@
     {% endif %}
   </div>
 
-  {# Enhanced Quality & Evidence Section #}
-  {% if evidenceLevel is defined or (confidenceScore is defined and confidenceScore > 0) %}
+  {# Learning Progress Section #}
+  {% if difficulty or status %}
   <div class="metadata-quality">
-    <div class="metadata-label" style="margin-top: 1rem; margin-bottom: 0.5rem;">Quality Indicators</div>
+    <div class="metadata-label" style="margin-top: 1rem; margin-bottom: 0.5rem;">Learning Progress</div>
     <div class="metadata-grid">
-      {% if evidenceLevel is defined and evidenceLevel is number %}
-      <div class="metadata-item evidence-item">
-        <div class="metadata-label">Evidence Level</div>
+      {% if difficulty %}
+      <div class="metadata-item">
+        <div class="metadata-label">Difficulty</div>
         <div class="metadata-value">
-          {% include "components/evidenceLevel.njk" with {numericLevel: evidenceLevel, showLabel: false} %}
+          <span class="difficulty-badge {% if difficulty == 'beginner' %}beginner{% elif difficulty == 'intermediate' %}intermediate{% else %}advanced{% endif %}">
+            {{ difficulty | capitalize }}
+          </span>
         </div>
       </div>
       {% endif %}
 
-      {% if confidenceScore is defined and confidenceScore > 0 %}
+      {% if status %}
       <div class="metadata-item">
-        <div class="metadata-label">Confidence</div>
-        <div class="metadata-value confidence-score">
-          {% set confidencePercent = (confidenceScore * 100) | round %}
-          <span class="confidence-badge {% if confidencePercent >= 80 %}high{% elif confidencePercent >= 50 %}moderate{% else %}low{% endif %}">
-            {{ confidencePercent }}%
+        <div class="metadata-label">Status</div>
+        <div class="metadata-value">
+          <span class="status-badge {{ status }}">
+            {{ status | capitalize }}
           </span>
         </div>
       </div>
@@ -159,52 +149,63 @@
   </div>
   {% endif %}
 
-  {# Database Links Section #}
-  {% if pubchemId or drugbankId or pmid or doi %}
+  {# External Resources Section #}
+  {% if wikipediaUrl or youtubeUrl or goodreadsUrl or githubUrl or genericUrl %}
   <div class="metadata-links">
-    <div class="metadata-label" style="margin-top: 1rem; margin-bottom: 0.5rem;">External References</div>
+    <div class="metadata-label" style="margin-top: 1rem; margin-bottom: 0.5rem;">External Resources</div>
     <div class="database-links">
-      {% if pubchemId %}
-      <a href="https://pubchem.ncbi.nlm.nih.gov/compound/{{ pubchemId }}"
+      {% if wikipediaUrl %}
+      <a href="{{ wikipediaUrl }}"
          target="_blank"
          rel="noopener noreferrer"
-         class="db-link pubchem"
-         title="View on PubChem">
-        <i icon-name="flask-conical"></i>
-        PubChem: {{ pubchemId }}
-      </a>
-      {% endif %}
-
-      {% if drugbankId %}
-      <a href="https://go.drugbank.com/drugs/{{ drugbankId }}"
-         target="_blank"
-         rel="noopener noreferrer"
-         class="db-link drugbank"
-         title="View on DrugBank">
-        <i icon-name="pill"></i>
-        DrugBank: {{ drugbankId }}
-      </a>
-      {% endif %}
-
-      {% if pmid %}
-      <a href="https://pubmed.ncbi.nlm.nih.gov/{{ pmid }}"
-         target="_blank"
-         rel="noopener noreferrer"
-         class="db-link pubmed"
-         title="View on PubMed">
+         class="db-link wikipedia"
+         title="View on Wikipedia">
         <i icon-name="book-open"></i>
-        PMID: {{ pmid }}
+        Wikipedia
       </a>
       {% endif %}
 
-      {% if doi %}
-      <a href="https://doi.org/{{ doi }}"
+      {% if youtubeUrl %}
+      <a href="{{ youtubeUrl }}"
          target="_blank"
          rel="noopener noreferrer"
-         class="db-link doi"
-         title="View via DOI">
+         class="db-link youtube"
+         title="Watch on YouTube">
+        <i icon-name="play-circle"></i>
+        YouTube
+      </a>
+      {% endif %}
+
+      {% if goodreadsUrl %}
+      <a href="{{ goodreadsUrl }}"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="db-link goodreads"
+         title="View on Goodreads">
+        <i icon-name="book"></i>
+        Goodreads
+      </a>
+      {% endif %}
+
+      {% if githubUrl %}
+      <a href="{{ githubUrl }}"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="db-link github"
+         title="View on GitHub">
+        <i icon-name="github"></i>
+        GitHub
+      </a>
+      {% endif %}
+
+      {% if genericUrl %}
+      <a href="{{ genericUrl }}"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="db-link url"
+         title="Visit Resource">
         <i icon-name="external-link"></i>
-        DOI: {{ doi }}
+        Visit Resource
       </a>
       {% endif %}
     </div>

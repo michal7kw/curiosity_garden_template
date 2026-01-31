@@ -33,19 +33,17 @@ eleventyExcludeFromCollections: true
         <div id="search-results-dropdown" class="search-dropdown"></div>
       </div>
 
-      <!-- Entity Type Filters -->
+      <!-- Entity Type Filters (Learning-focused) -->
       <div class="control-section">
         <label class="control-label">Filter by Type</label>
         <div class="filter-chips" id="filter-chips">
           <button class="filter-chip active" data-type="all">All</button>
-          <button class="filter-chip" data-type="biomarker" style="--chip-color: #4CAF50;">Biomarker</button>
-          <button class="filter-chip" data-type="drug" style="--chip-color: #2196F3;">Drug</button>
-          <button class="filter-chip" data-type="supplement" style="--chip-color: #9C27B0;">Supplement</button>
-          <button class="filter-chip" data-type="condition" style="--chip-color: #FF9800;">Condition</button>
-          <button class="filter-chip" data-type="intervention" style="--chip-color: #00BCD4;">Intervention</button>
-          <button class="filter-chip" data-type="hormone" style="--chip-color: #E91E63;">Hormone</button>
-          <button class="filter-chip" data-type="organ" style="--chip-color: #795548;">Organ</button>
-          <button class="filter-chip" data-type="protein" style="--chip-color: #3F51B5;">Protein</button>
+          <button class="filter-chip" data-type="concept" style="--chip-color: #3B82F6;">Concept</button>
+          <button class="filter-chip" data-type="course" style="--chip-color: #F59E0B;">Course</button>
+          <button class="filter-chip" data-type="skill" style="--chip-color: #EAB308;">Skill</button>
+          <button class="filter-chip" data-type="resource" style="--chip-color: #22C55E;">Resource</button>
+          <button class="filter-chip" data-type="question" style="--chip-color: #8B5CF6;">Question</button>
+          <button class="filter-chip" data-type="insight" style="--chip-color: #EC4899;">Insight</button>
         </div>
       </div>
 
@@ -87,21 +85,19 @@ eleventyExcludeFromCollections: true
     </div>
   </div>
 
-  <!-- Legend Panel -->
+  <!-- Legend Panel (Learning-focused) -->
   <div class="graph-legend" id="graph-legend">
     <div class="legend-header">
       <span>Entity Types</span>
       <button class="legend-close" id="legend-close">×</button>
     </div>
     <div class="legend-items">
-      <div class="legend-item"><span class="legend-dot" style="background: #4CAF50;"></span> Biomarker</div>
-      <div class="legend-item"><span class="legend-dot" style="background: #2196F3;"></span> Drug</div>
-      <div class="legend-item"><span class="legend-dot" style="background: #9C27B0;"></span> Supplement</div>
-      <div class="legend-item"><span class="legend-dot" style="background: #FF9800;"></span> Condition</div>
-      <div class="legend-item"><span class="legend-dot" style="background: #00BCD4;"></span> Intervention</div>
-      <div class="legend-item"><span class="legend-dot" style="background: #E91E63;"></span> Hormone</div>
-      <div class="legend-item"><span class="legend-dot" style="background: #795548;"></span> Organ</div>
-      <div class="legend-item"><span class="legend-dot" style="background: #3F51B5;"></span> Protein</div>
+      <div class="legend-item"><span class="legend-dot" style="background: #3B82F6;"></span> Concept</div>
+      <div class="legend-item"><span class="legend-dot" style="background: #F59E0B;"></span> Course</div>
+      <div class="legend-item"><span class="legend-dot" style="background: #EAB308;"></span> Skill</div>
+      <div class="legend-item"><span class="legend-dot" style="background: #22C55E;"></span> Resource</div>
+      <div class="legend-item"><span class="legend-dot" style="background: #8B5CF6;"></span> Question</div>
+      <div class="legend-item"><span class="legend-dot" style="background: #EC4899;"></span> Insight</div>
       <div class="legend-item"><span class="legend-dot" style="background: #888888;"></span> Other</div>
     </div>
   </div>
@@ -131,19 +127,14 @@ eleventyExcludeFromCollections: true
   // Configuration
   // =========================================================================
 
+  // Entity type colors (Learning-focused)
   const entityTypeColors = {
-    biomarker: '#4CAF50',
-    drug: '#2196F3',
-    supplement: '#9C27B0',
-    condition: '#FF9800',
-    intervention: '#00BCD4',
-    hormone: '#E91E63',
-    organ: '#795548',
-    metabolite: '#607D8B',
-    gene: '#8BC34A',
-    protein: '#3F51B5',
-    neurotransmitter: '#FF5722',
-    cellularcomponent: '#009688',
+    concept: '#3B82F6',     // Blue
+    course: '#F59E0B',      // Orange
+    skill: '#EAB308',       // Yellow
+    resource: '#22C55E',    // Green
+    question: '#8B5CF6',    // Purple
+    insight: '#EC4899',     // Pink
     default: '#888888'
   };
 
