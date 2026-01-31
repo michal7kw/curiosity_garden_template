@@ -139,11 +139,6 @@ main.content {
         font-size: 2rem;
     }
 
-    .label {
-        font-weight: 600;
-        font-size: 1.1rem;
-    }
-
     // Entity type colors
     &.biomarker { border-left-color: #4CAF50; }
     &.drug { border-left-color: #2196F3; }
@@ -153,6 +148,25 @@ main.content {
     &.protein { border-left-color: #3F51B5; }
     &.hormone { border-left-color: #E91E63; }
     &.organ { border-left-color: #795548; }
+
+    .entity-card-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .label {
+        font-weight: 600;
+        font-size: 1.1rem;
+        display: block;
+    }
+
+    .desc {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        display: block;
+        line-height: 1.4;
+    }
 }
 
 .entity-list {
