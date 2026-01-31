@@ -1,0 +1,7 @@
+{
+  "tags": ["note"],
+  "layout": "note.njk",
+  "eleventyComputed": {
+    "title": "data.name || data.title"
+  }
+}
