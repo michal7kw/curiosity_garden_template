@@ -1,0 +1,234 @@
+{#
+  Entity Metadata Component
+  Displays structured metadata for entity notes
+
+  Usage:
+  {% include "components/entityMetadata.njk" %}
+
+  Expected context from frontmatter:
+  - name: Entity name
+  - description: Brief description
+  - dg-entity-type: Entity type
+  - tags: Array of tags
+  - created: Creation date
+  - last_modified: Last modification date
+  - id: Entity ID
+  - source: Data source
+
+  Optional enhanced fields:
+  - evidence_level: Numeric evidence level (0-5)
+  - confidence_score: Confidence value (0.0-1.0)
+  - pubchem_id: PubChem compound ID
+  - drugbank_id: DrugBank drug ID
+  - pmid: PubMed ID
+
+  Privacy fields (NEVER displayed):
+  - element_id, primekg_element_id, isPersonal, needs_review, last_sync
+#}
+
+{% set type = page.data['dg-entity-type'] or page.data.type %}
+{% set entityName = page.data.name or title or page.fileSlug %}
+{% set entityDesc = page.data.description or '' %}
+{% set entityId = page.data.id or '' %}
+{% set entitySource = page.data.source or '' %}
+{% set entityTags = tags or page.data.tags or [] %}
+{% set createdDate = page.data.created or created %}
+{% set modifiedDate = page.data.last_modified or page.data.updated or updated %}
+
+{# Enhanced fields #}
+{% set evidenceLevel = page.data.evidence_level %}
+{% set confidenceScore = page.data.confidence_score %}
+{% set pubchemId = page.data.pubchem_id %}
+{% set drugbankId = page.data.drugbank_id %}
+{% set pmid = page.data.pmid %}
+{% set doi = page.data.doi %}
+
+{# Entity icons #}
+{% set entityIcons = {
+  'biomarker': '🧪',
+  'drug': '💊',
+  'supplement': '🌿',
+  'condition': '🏥',
+  'intervention': '⚕️',
+  'hormone': '🧬',
+  'organ': '🫀',
+  'metabolite': '⚙️',
+  'gene': '🧬',
+  'protein': '🔬',
+  'neurotransmitter': '⚡',
+  'cellularcomponent': '🔬',
+  'clinicalpattern': '📊',
+  'cognitivefunction': '🧠',
+  'examination': '🩺',
+  'labtest': '🔬',
+  'labtestpanel': '📋',
+  'pathway': '🔀',
+  'phenotype': '👤',
+  'research': '📚'
+} %}
+
+{% if type %}
+<div class="entity-metadata" data-entity-type="{{ type | lower }}">
+  <div class="metadata-header">
+    <h4>
+      <i icon-name="info"></i>
+      Entity Information
+    </h4>
+    {% include "components/entityBadge.njk" with {entityType: type, badgeSize: 'small'} %}
+  </div>
+
+  <div class="metadata-grid">
+    {% if entityName %}
+    <div class="metadata-item">
+      <div class="metadata-label">Name</div>
+      <div class="metadata-value">{{ entityName }}</div>
+    </div>
+    {% endif %}
+
+    {% if type %}
+    <div class="metadata-item">
+      <div class="metadata-label">Type</div>
+      <div class="metadata-value">
+        {{ entityIcons[type | lower] or '📄' }}
+        {{ type | capitalize }}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if entityId %}
+    <div class="metadata-item">
+      <div class="metadata-label">ID</div>
+      <div class="metadata-value">
+        <code>{{ entityId }}</code>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if entitySource %}
+    <div class="metadata-item">
+      <div class="metadata-label">Source</div>
+      <div class="metadata-value">{{ entitySource }}</div>
+    </div>
+    {% endif %}
+
+    {% if createdDate %}
+    <div class="metadata-item">
+      <div class="metadata-label">Created</div>
+      <div class="metadata-value">
+        <span class="human-date" data-date="{{ createdDate }}">{{ createdDate }}</span>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if modifiedDate %}
+    <div class="metadata-item">
+      <div class="metadata-label">Updated</div>
+      <div class="metadata-value">
+        <span class="human-date" data-date="{{ modifiedDate }}">{{ modifiedDate }}</span>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  {# Enhanced Quality & Evidence Section #}
+  {% if evidenceLevel is defined or (confidenceScore is defined and confidenceScore > 0) %}
+  <div class="metadata-quality">
+    <div class="metadata-label" style="margin-top: 1rem; margin-bottom: 0.5rem;">Quality Indicators</div>
+    <div class="metadata-grid">
+      {% if evidenceLevel is defined and evidenceLevel is number %}
+      <div class="metadata-item evidence-item">
+        <div class="metadata-label">Evidence Level</div>
+        <div class="metadata-value">
+          {% include "components/evidenceLevel.njk" with {numericLevel: evidenceLevel, showLabel: false} %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if confidenceScore is defined and confidenceScore > 0 %}
+      <div class="metadata-item">
+        <div class="metadata-label">Confidence</div>
+        <div class="metadata-value confidence-score">
+          {% set confidencePercent = (confidenceScore * 100) | round %}
+          <span class="confidence-badge {% if confidencePercent >= 80 %}high{% elif confidencePercent >= 50 %}moderate{% else %}low{% endif %}">
+            {{ confidencePercent }}%
+          </span>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  {# Database Links Section #}
+  {% if pubchemId or drugbankId or pmid or doi %}
+  <div class="metadata-links">
+    <div class="metadata-label" style="margin-top: 1rem; margin-bottom: 0.5rem;">External References</div>
+    <div class="database-links">
+      {% if pubchemId %}
+      <a href="https://pubchem.ncbi.nlm.nih.gov/compound/{{ pubchemId }}"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="db-link pubchem"
+         title="View on PubChem">
+        <i icon-name="flask-conical"></i>
+        PubChem: {{ pubchemId }}
+      </a>
+      {% endif %}
+
+      {% if drugbankId %}
+      <a href="https://go.drugbank.com/drugs/{{ drugbankId }}"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="db-link drugbank"
+         title="View on DrugBank">
+        <i icon-name="pill"></i>
+        DrugBank: {{ drugbankId }}
+      </a>
+      {% endif %}
+
+      {% if pmid %}
+      <a href="https://pubmed.ncbi.nlm.nih.gov/{{ pmid }}"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="db-link pubmed"
+         title="View on PubMed">
+        <i icon-name="book-open"></i>
+        PMID: {{ pmid }}
+      </a>
+      {% endif %}
+
+      {% if doi %}
+      <a href="https://doi.org/{{ doi }}"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="db-link doi"
+         title="View via DOI">
+        <i icon-name="external-link"></i>
+        DOI: {{ doi }}
+      </a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if entityDesc %}
+  <div class="metadata-description">
+    <div class="metadata-label">Description</div>
+    <p>{{ entityDesc }}</p>
+  </div>
+  {% endif %}
+
+  {% if entityTags and entityTags.length > 0 %}
+  <div class="metadata-tags">
+    <div class="metadata-label">Tags</div>
+    <div class="tag-list">
+      {% for tag in entityTags %}
+        {% if tag != 'gardenEntry' and tag != 'note' %}
+        <a class="tag" onclick="toggleTagSearch(this)">#{{ tag }}</a>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endif %}

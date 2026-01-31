@@ -1,0 +1,241 @@
+---
+pagination:
+  data: collections.gardenIndexes
+  size: 1
+  alias: garden
+permalink: /garden/{{ garden.username }}/
+---
+<!DOCTYPE html>
+<html lang="{{ meta.mainLanguage }}">
+  <head>
+    <title>{{ garden.username }}'s Digital Garden</title>
+    {%include "components/pageheader.njk"%}
+    <style>
+      .garden-home {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .garden-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--background-modifier-border);
+      }
+
+      .garden-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .garden-stats {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+      }
+
+      .garden-stats span {
+        margin: 0 0.5rem;
+      }
+
+      .entity-types {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+
+      .type-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background: var(--background-secondary);
+        border-radius: 1rem;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        text-transform: capitalize;
+      }
+
+      .type-badge:hover {
+        background: var(--background-modifier-hover);
+      }
+
+      .entity-section {
+        margin-bottom: 3rem;
+      }
+
+      .entity-section h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        text-transform: capitalize;
+        color: var(--text-normal);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .entity-section h2::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 1.2em;
+        background: var(--interactive-accent);
+        border-radius: 2px;
+      }
+
+      .entity-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1rem;
+      }
+
+      .entity-card {
+        display: block;
+        padding: 1.25rem;
+        background: var(--background-secondary);
+        border-radius: 8px;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
+      }
+
+      .entity-card:hover {
+        border-color: var(--interactive-accent);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .entity-card .entity-type {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+      }
+
+      .entity-card h3 {
+        font-size: 1.1rem;
+        margin: 0 0 0.5rem 0;
+        color: var(--text-normal);
+      }
+
+      .entity-card p {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin: 0;
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .entity-card .card-tags {
+        margin-top: 0.75rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+      }
+
+      .entity-card .tag {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.4rem;
+        background: var(--background-modifier-border);
+        border-radius: 0.25rem;
+        color: var(--text-muted);
+      }
+
+      .empty-garden {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--text-muted);
+      }
+
+      .empty-garden i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+
+      @media (max-width: 768px) {
+        .garden-home {
+          padding: 1rem;
+        }
+
+        .garden-header h1 {
+          font-size: 1.75rem;
+        }
+
+        .entity-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body class="theme-{{meta.baseTheme}} markdown-preview-view">
+    {%include "components/navbar.njk"%}
+
+    <main class="garden-home">
+      <header class="garden-header">
+        <h1>{{ garden.username }}'s Digital Garden</h1>
+        <p class="garden-stats">
+          <span><i icon-name="file-text"></i> {{ garden.noteCount }} published notes</span>
+          {% if garden.lastUpdated %}
+            <span>•</span>
+            <span><i icon-name="calendar-clock"></i> Last updated: <span class="human-date" data-date="{{ garden.lastUpdated }}"></span></span>
+          {% endif %}
+        </p>
+
+        <div class="entity-types">
+          {% for type in garden.entityTypes %}
+            <a href="#{{ type }}" class="type-badge">{{ type }}</a>
+          {% endfor %}
+        </div>
+      </header>
+
+      {% if garden.notes.length > 0 %}
+        {% set groupedNotes = garden.notes | groupByType %}
+
+        {% for type, notes in groupedNotes %}
+          <section class="entity-section" id="{{ type }}">
+            <h2>{{ type }}</h2>
+            <div class="entity-grid">
+              {% for note in notes %}
+                {% set noteSlug = note.data.slug or (note.data.title | slugify) or note.fileSlug %}
+                <a href="/garden/{{ garden.username }}/{{ type }}/{{ noteSlug }}/" class="entity-card">
+                  <span class="entity-type">{{ note.data.entityType or type }}</span>
+                  <h3>{{ note.data.title or note.fileSlug }}</h3>
+                  {% if note.data.description %}
+                    <p>{{ note.data.description | truncate(100) }}</p>
+                  {% endif %}
+                  {% if note.data.tags and note.data.tags.length > 0 %}
+                    <div class="card-tags">
+                      {% for tag in note.data.tags | slice(0, 3) %}
+                        {% if tag != 'gardenEntry' and tag != 'note' %}
+                          <span class="tag">#{{ tag }}</span>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                </a>
+              {% endfor %}
+            </div>
+          </section>
+        {% endfor %}
+
+      {% else %}
+        <div class="empty-garden">
+          <i icon-name="sprout"></i>
+          <h2>This garden is just getting started</h2>
+          <p>No published notes yet. Check back soon!</p>
+        </div>
+      {% endif %}
+    </main>
+
+    {% include "components/timestamps.njk" %}
+    {% include "components/lucideIcons.njk" %}
+    {% for imp in dynamics.common.footer %}
+      {% include imp %}
+    {% endfor %}
+  </body>
+</html>

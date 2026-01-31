@@ -1,0 +1,97 @@
+---
+layout: layouts/index.njk
+title: Curiosity Garden
+eleventyExcludeFromCollections: true
+---
+
+<div class="home-container">
+  <!-- Hero Section -->
+  <header class="hero">
+    <h1>Curiosity Garden</h1>
+    <p>A digital garden for exploring ideas, learning skills, and capturing insights across any domain</p>
+  </header>
+
+  <!-- Quick Navigation Cards -->
+  <section class="quick-nav">
+    <!-- Getting Started Card -->
+    <div class="nav-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+      <h2>Getting Started</h2>
+      <p>New here? Start exploring</p>
+      <div>
+        <a href="/docs/getting-started/">How to Use This Garden</a>
+        <a href="/docs/entity-types/">Entity Types</a>
+      </div>
+    </div>
+
+    <!-- Recent Insights Card -->
+    <div class="nav-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+      <h2>Recent Insights</h2>
+      <p>Latest discoveries and realizations</p>
+      <div>
+        <a href="/entities/insight/">Browse Insights</a>
+        <a href="/entities/question/">Open Questions</a>
+      </div>
+    </div>
+
+    <!-- Knowledge Graph Card -->
+    <div class="nav-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+      <h2>Explore Connections</h2>
+      <p>See how ideas connect</p>
+      <div>
+        <a href="/graph/">Knowledge Graph</a>
+        <a href="/search/">Search</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Entity Categories -->
+  <section class="entity-categories">
+    <h2>Browse by Category</h2>
+    <div class="entity-types-grid">
+      <a href="/entities/concept/" class="entity-type-card concept">
+        <span class="icon">💡</span>
+        <span class="label">Concepts</span>
+        <span class="desc">Core ideas and mental models</span>
+      </a>
+
+      <a href="/entities/course/" class="entity-type-card course">
+        <span class="icon">🎓</span>
+        <span class="label">Courses</span>
+        <span class="desc">Learning journeys and curricula</span>
+      </a>
+
+      <a href="/entities/skill/" class="entity-type-card skill">
+        <span class="icon">🎯</span>
+        <span class="label">Skills</span>
+        <span class="desc">Abilities to develop and track</span>
+      </a>
+
+      <a href="/entities/resource/" class="entity-type-card resource">
+        <span class="icon">📚</span>
+        <span class="label">Resources</span>
+        <span class="desc">Books, articles, and materials</span>
+      </a>
+
+      <a href="/entities/question/" class="entity-type-card question">
+        <span class="icon">❓</span>
+        <span class="label">Questions</span>
+        <span class="desc">Open inquiries and research gaps</span>
+      </a>
+
+      <a href="/entities/insight/" class="entity-type-card insight">
+        <span class="icon">✨</span>
+        <span class="label">Insights</span>
+        <span class="desc">Aha moments and realizations</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer Info -->
+  <footer class="home-footer">
+    <p>Curiosity Knowledge Garden</p>
+    <p>
+      Built with <a href="https://www.11ty.dev/">Eleventy</a> •
+      Explore. Learn. Connect.
+    </p>
+  </footer>
+</div>

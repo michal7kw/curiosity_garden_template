@@ -1,0 +1,12 @@
+<script>
+// Wait for DOM and check if Lucide is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+        lucide.createIcons({
+            attrs: {
+                class: ["svg-icon"]
+            }
+        });
+    }
+});
+</script>

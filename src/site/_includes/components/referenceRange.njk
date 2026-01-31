@@ -1,0 +1,82 @@
+{#
+  Reference Range Component
+  Displays visual reference ranges for biomarker values
+
+  Usage:
+  {% include "components/referenceRange.njk" with {
+    label: "Glucose",
+    value: 95,
+    unit: "mg/dL",
+    low: 70,
+    optimal_low: 80,
+    optimal_high: 100,
+    high: 125
+  } %}
+
+  Parameters:
+  - label: The biomarker name
+  - value: Current value (optional, shows marker if provided)
+  - unit: Unit of measurement
+  - low: Low threshold
+  - optimal_low: Start of optimal range
+  - optimal_high: End of optimal range
+  - high: High threshold
+#}
+
+{% set rangeLabel = label or 'Value' %}
+{% set currentValue = value %}
+{% set rangeUnit = unit or '' %}
+{% set lowVal = low | default(0) %}
+{% set optLow = optimal_low | default(lowVal) %}
+{% set optHigh = optimal_high | default(high) %}
+{% set highVal = high | default(100) %}
+
+{# Calculate value status #}
+{% set valueStatus = 'optimal' %}
+{% if currentValue %}
+  {% if currentValue < lowVal %}
+    {% set valueStatus = 'low' %}
+  {% elif currentValue < optLow %}
+    {% set valueStatus = 'borderline-low' %}
+  {% elif currentValue > highVal %}
+    {% set valueStatus = 'high' %}
+  {% elif currentValue > optHigh %}
+    {% set valueStatus = 'borderline-high' %}
+  {% endif %}
+{% endif %}
+
+{# Calculate marker position (0-100%) #}
+{% set totalRange = highVal - lowVal %}
+{% set markerPosition = 0 %}
+{% if currentValue and totalRange > 0 %}
+  {% set markerPosition = ((currentValue - lowVal) / totalRange * 100) %}
+  {% if markerPosition < 0 %}
+    {% set markerPosition = 0 %}
+  {% elif markerPosition > 100 %}
+    {% set markerPosition = 100 %}
+  {% endif %}
+{% endif %}
+
+<div class="reference-range">
+  <div class="range-header">
+    <span class="range-title">{{ rangeLabel }}</span>
+    {% if currentValue %}
+    <span class="range-value {{ valueStatus }}">
+      {{ currentValue }} {{ rangeUnit }}
+    </span>
+    {% endif %}
+  </div>
+
+  <div class="range-bar-container">
+    <div class="range-bar"></div>
+    {% if currentValue %}
+    <div class="range-marker" style="left: {{ markerPosition }}%;"></div>
+    {% endif %}
+  </div>
+
+  <div class="range-labels">
+    <span class="range-low">{{ lowVal }} {{ rangeUnit }}</span>
+    <span class="range-optimal">Optimal: {{ optLow }}-{{ optHigh }}</span>
+    <span class="range-high">{{ highVal }} {{ rangeUnit }}</span>
+  </div>
+</div>

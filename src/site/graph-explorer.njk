@@ -1,0 +1,603 @@
+---
+title: Knowledge Graph Explorer
+layout: layouts/note.njk
+permalink: /graph/
+eleventyExcludeFromCollections: true
+---
+
+<div class="graph-explorer" id="graph-explorer">
+  <!-- Header -->
+  <div class="graph-header">
+    <h1>Knowledge Graph Explorer</h1>
+    <p class="graph-description">Interactive visualization of entity relationships</p>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="graph-loading" id="graph-loading">
+    <div class="loading-spinner"></div>
+    <span>Loading graph data...</span>
+  </div>
+
+  <!-- Control Panel -->
+  <div class="graph-control-panel" id="control-panel">
+    <div class="panel-header">
+      <span class="panel-title">Controls</span>
+      <button class="panel-toggle" id="panel-toggle" title="Toggle panel">◀</button>
+    </div>
+
+    <div class="panel-content">
+      <!-- Search -->
+      <div class="control-section">
+        <label class="control-label">Search Nodes</label>
+        <input type="text" id="node-search" class="control-input" placeholder="Type to search...">
+        <div id="search-results-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Entity Type Filters -->
+      <div class="control-section">
+        <label class="control-label">Filter by Type</label>
+        <div class="filter-chips" id="filter-chips">
+          <button class="filter-chip active" data-type="all">All</button>
+          <button class="filter-chip" data-type="biomarker" style="--chip-color: #4CAF50;">Biomarker</button>
+          <button class="filter-chip" data-type="drug" style="--chip-color: #2196F3;">Drug</button>
+          <button class="filter-chip" data-type="supplement" style="--chip-color: #9C27B0;">Supplement</button>
+          <button class="filter-chip" data-type="condition" style="--chip-color: #FF9800;">Condition</button>
+          <button class="filter-chip" data-type="intervention" style="--chip-color: #00BCD4;">Intervention</button>
+          <button class="filter-chip" data-type="hormone" style="--chip-color: #E91E63;">Hormone</button>
+          <button class="filter-chip" data-type="organ" style="--chip-color: #795548;">Organ</button>
+          <button class="filter-chip" data-type="protein" style="--chip-color: #3F51B5;">Protein</button>
+        </div>
+      </div>
+
+      <!-- Zoom Controls -->
+      <div class="control-section">
+        <label class="control-label">Zoom</label>
+        <div class="zoom-controls">
+          <button class="control-btn" id="zoom-in" title="Zoom in">+</button>
+          <button class="control-btn" id="zoom-out" title="Zoom out">−</button>
+          <button class="control-btn" id="zoom-fit" title="Fit to view">⊡</button>
+          <button class="control-btn" id="zoom-reset" title="Reset zoom">↺</button>
+        </div>
+      </div>
+
+      <!-- Physics Controls -->
+      <div class="control-section">
+        <label class="control-label">Physics Simulation</label>
+        <div class="physics-controls">
+          <button class="control-btn active" id="physics-toggle">▶ Running</button>
+        </div>
+      </div>
+
+      <!-- Node Size -->
+      <div class="control-section">
+        <label class="control-label">Node Size: <span id="node-size-value">1.0</span>x</label>
+        <input type="range" id="node-size" class="control-slider" min="0.5" max="3" step="0.1" value="1">
+      </div>
+
+      <!-- Link Distance -->
+      <div class="control-section">
+        <label class="control-label">Link Distance: <span id="link-distance-value">30</span></label>
+        <input type="range" id="link-distance" class="control-slider" min="10" max="100" step="5" value="30">
+      </div>
+
+      <!-- Full Screen -->
+      <div class="control-section">
+        <button class="control-btn full-width" id="fullscreen-toggle">⛶ Full Screen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legend Panel -->
+  <div class="graph-legend" id="graph-legend">
+    <div class="legend-header">
+      <span>Entity Types</span>
+      <button class="legend-close" id="legend-close">×</button>
+    </div>
+    <div class="legend-items">
+      <div class="legend-item"><span class="legend-dot" style="background: #4CAF50;"></span> Biomarker</div>
+      <div class="legend-item"><span class="legend-dot" style="background: #2196F3;"></span> Drug</div>
+      <div class="legend-item"><span class="legend-dot" style="background: #9C27B0;"></span> Supplement</div>
+      <div class="legend-item"><span class="legend-dot" style="background: #FF9800;"></span> Condition</div>
+      <div class="legend-item"><span class="legend-dot" style="background: #00BCD4;"></span> Intervention</div>
+      <div class="legend-item"><span class="legend-dot" style="background: #E91E63;"></span> Hormone</div>
+      <div class="legend-item"><span class="legend-dot" style="background: #795548;"></span> Organ</div>
+      <div class="legend-item"><span class="legend-dot" style="background: #3F51B5;"></span> Protein</div>
+      <div class="legend-item"><span class="legend-dot" style="background: #888888;"></span> Other</div>
+    </div>
+  </div>
+
+  <!-- Graph Container -->
+  <div class="graph-container-wrapper">
+    <div id="graph-container"></div>
+  </div>
+
+  <!-- Stats Bar -->
+  <div class="graph-stats-bar">
+    <span id="graph-stats">Loading...</span>
+    <button class="legend-toggle" id="legend-toggle" title="Toggle legend">🎨 Legend</button>
+  </div>
+
+  <!-- Tooltip -->
+  <div class="graph-tooltip" id="graph-tooltip"></div>
+
+  <!-- Back Link -->
+  <p class="back-link"><a href="/">← Back to Home</a></p>
+</div>
+
+<script src="https://unpkg.com/force-graph"></script>
+<script>
+(async function() {
+  // =========================================================================
+  // Configuration
+  // =========================================================================
+
+  const entityTypeColors = {
+    biomarker: '#4CAF50',
+    drug: '#2196F3',
+    supplement: '#9C27B0',
+    condition: '#FF9800',
+    intervention: '#00BCD4',
+    hormone: '#E91E63',
+    organ: '#795548',
+    metabolite: '#607D8B',
+    gene: '#8BC34A',
+    protein: '#3F51B5',
+    neurotransmitter: '#FF5722',
+    cellularcomponent: '#009688',
+    default: '#888888'
+  };
+
+  let nodeScale = 1.0;
+  let linkDistance = 30;
+  let activeFilters = new Set(['all']);
+  let highlightNodes = new Set();
+  let hoverNode = null;
+  let searchHighlight = null;
+  let isPaused = false;
+  let originalData = null;
+
+  // =========================================================================
+  // Utility Functions
+  // =========================================================================
+
+  function getCssVar(variable) {
+    return getComputedStyle(document.body).getPropertyValue(variable).trim();
+  }
+
+  function getEntityTypeColor(node) {
+    const entityType = node.entityType || node.type || 'default';
+    return entityTypeColors[entityType.toLowerCase()] || entityTypeColors.default;
+  }
+
+  function getEntityType(node) {
+    return (node.entityType || node.type || 'other').toLowerCase();
+  }
+
+  function htmlDecode(input) {
+    if (!input) return '';
+    const doc = new DOMParser().parseFromString(input, "text/html");
+    return doc.documentElement.textContent;
+  }
+
+  // =========================================================================
+  // Data Loading
+  // =========================================================================
+
+  const loadingEl = document.getElementById('graph-loading');
+
+  try {
+    const graphData = await fetch('/graph.json').then(res => res.json());
+
+    // Filter hidden nodes
+    const hiddens = Object.values(graphData.nodes).filter(n => n.hide).map(n => n.id);
+    originalData = {
+      links: graphData.links.filter(l => hiddens.indexOf(l.source) === -1 && hiddens.indexOf(l.target) === -1),
+      nodes: Object.values(graphData.nodes).filter(n => !n.hide)
+    };
+
+    // Add neighbor references for highlighting
+    const nodeById = {};
+    originalData.nodes.forEach(node => {
+      node.neighbors = [];
+      nodeById[node.id] = node;
+    });
+    originalData.links.forEach(link => {
+      const sourceNode = nodeById[link.source] || nodeById[link.source.id];
+      const targetNode = nodeById[link.target] || nodeById[link.target.id];
+      if (sourceNode && targetNode) {
+        sourceNode.neighbors.push(targetNode.id);
+        targetNode.neighbors.push(sourceNode.id);
+      }
+    });
+
+    loadingEl.style.display = 'none';
+  } catch (err) {
+    loadingEl.innerHTML = '<span style="color: #f44336;">Failed to load graph</span>';
+    console.error('Graph load error:', err);
+    return;
+  }
+
+  // =========================================================================
+  // Graph Initialization
+  // =========================================================================
+
+  const container = document.getElementById('graph-container');
+  const textColor = getCssVar('--text-normal') || '#dcddde';
+  const mutedColor = getCssVar('--text-faint') || '#666666';
+  const bgColor = getCssVar('--background-primary') || '#201f1f';
+  const linkColor = getCssVar('--background-modifier-border') || '#444444';
+
+  const Graph = ForceGraph()(container)
+    .graphData(JSON.parse(JSON.stringify(originalData)))
+    .nodeId('id')
+    .linkSource('source')
+    .linkTarget('target')
+    .backgroundColor(bgColor)
+    .d3AlphaDecay(0.02)
+    .d3VelocityDecay(0.3)
+    .linkDirectionalArrowLength(4)
+    .linkDirectionalArrowRelPos(0.5)
+    .linkWidth(link => {
+      if (hoverNode) {
+        const s = typeof link.source === 'object' ? link.source.id : link.source;
+        const t = typeof link.target === 'object' ? link.target.id : link.target;
+        if (s === hoverNode.id || t === hoverNode.id) return 2;
+        return 0.5;
+      }
+      return 1;
+    })
+    .linkColor(link => {
+      if (hoverNode) {
+        const s = typeof link.source === 'object' ? link.source.id : link.source;
+        const t = typeof link.target === 'object' ? link.target.id : link.target;
+        if (s === hoverNode.id || t === hoverNode.id) return textColor;
+        return mutedColor;
+      }
+      return linkColor;
+    })
+    .nodeCanvasObject((node, ctx, globalScale) => {
+      // Calculate node radius based on connections
+      const numNeighbors = (node.neighbors && node.neighbors.length) || 1;
+      const baseRadius = Math.min(8, Math.max(3, numNeighbors / 2 + 2));
+      const radius = baseRadius * nodeScale;
+
+      // Determine node color and opacity
+      const nodeColor = getEntityTypeColor(node);
+      let opacity = 1;
+
+      if (hoverNode) {
+        if (node === hoverNode || highlightNodes.has(node.id)) {
+          opacity = 1;
+        } else {
+          opacity = 0.15;
+        }
+      }
+
+      if (searchHighlight && searchHighlight !== node) {
+        opacity = 0.2;
+      }
+
+      // Draw node glow for highlighted nodes
+      if (node === hoverNode || node === searchHighlight) {
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, radius + 4, 0, 2 * Math.PI);
+        ctx.fillStyle = nodeColor + '44';
+        ctx.fill();
+      }
+
+      // Draw node circle
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, radius, 0, 2 * Math.PI);
+      ctx.fillStyle = opacity < 1 ? nodeColor + Math.round(opacity * 255).toString(16).padStart(2, '0') : nodeColor;
+      ctx.fill();
+
+      // Draw ring for hovered node
+      if (node === hoverNode) {
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, radius + 2, 0, 2 * Math.PI);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+
+      // Draw label
+      const label = htmlDecode(node.title || node.name || node.id);
+      const fontSize = Math.max(10, 12 * nodeScale) / globalScale;
+      ctx.font = `${fontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+
+      // Label shadow for readability
+      ctx.fillStyle = bgColor;
+      ctx.fillText(label, node.x + 0.5, node.y + radius + 3 + 0.5);
+
+      // Label text
+      ctx.fillStyle = opacity < 1 ? textColor + Math.round(opacity * 255).toString(16).padStart(2, '0') : textColor;
+      ctx.fillText(label, node.x, node.y + radius + 3);
+    })
+    .onNodeHover(node => {
+      container.style.cursor = node ? 'pointer' : 'grab';
+      highlightNodes.clear();
+
+      if (node) {
+        hoverNode = node;
+        highlightNodes.add(node.id);
+        if (node.neighbors) {
+          node.neighbors.forEach(id => highlightNodes.add(id));
+        }
+
+        // Show tooltip
+        const tooltip = document.getElementById('graph-tooltip');
+        const entityType = getEntityType(node);
+        tooltip.innerHTML = `
+          <div class="tooltip-title">${htmlDecode(node.title || node.name || node.id)}</div>
+          <div class="tooltip-type" style="background: ${getEntityTypeColor(node)};">${entityType}</div>
+          ${node.neighbors ? `<div class="tooltip-connections">${node.neighbors.length} connections</div>` : ''}
+        `;
+        tooltip.style.display = 'block';
+      } else {
+        hoverNode = null;
+        document.getElementById('graph-tooltip').style.display = 'none';
+      }
+    })
+    .onNodeClick(node => {
+      if (node.url) {
+        window.location.href = node.url;
+      }
+    })
+    .onNodeDragEnd(node => {
+      node.fx = node.x;
+      node.fy = node.y;
+    })
+    .onBackgroundClick(() => {
+      searchHighlight = null;
+    });
+
+  // Update link distance
+  Graph.d3Force('link').distance(linkDistance);
+
+  // Initial zoom to fit
+  setTimeout(() => Graph.zoomToFit(400, 60), 800);
+
+  // Update stats
+  document.getElementById('graph-stats').innerHTML =
+    `<strong>${originalData.nodes.length}</strong> entities • <strong>${originalData.links.length}</strong> connections`;
+
+  // =========================================================================
+  // Tooltip Position Tracking
+  // =========================================================================
+
+  container.addEventListener('mousemove', (e) => {
+    const tooltip = document.getElementById('graph-tooltip');
+    if (tooltip.style.display === 'block') {
+      tooltip.style.left = (e.clientX + 15) + 'px';
+      tooltip.style.top = (e.clientY + 15) + 'px';
+    }
+  });
+
+  // =========================================================================
+  // Control Panel
+  // =========================================================================
+
+  // Panel toggle
+  document.getElementById('panel-toggle').addEventListener('click', () => {
+    const panel = document.getElementById('control-panel');
+    const btn = document.getElementById('panel-toggle');
+    panel.classList.toggle('collapsed');
+    btn.textContent = panel.classList.contains('collapsed') ? '▶' : '◀';
+  });
+
+  // Zoom controls
+  document.getElementById('zoom-in').addEventListener('click', () => {
+    Graph.zoom(Graph.zoom() * 1.3, 300);
+  });
+
+  document.getElementById('zoom-out').addEventListener('click', () => {
+    Graph.zoom(Graph.zoom() / 1.3, 300);
+  });
+
+  document.getElementById('zoom-fit').addEventListener('click', () => {
+    Graph.zoomToFit(400, 60);
+  });
+
+  document.getElementById('zoom-reset').addEventListener('click', () => {
+    Graph.zoom(1, 300);
+    Graph.centerAt(0, 0, 300);
+  });
+
+  // Physics toggle
+  document.getElementById('physics-toggle').addEventListener('click', (e) => {
+    isPaused = !isPaused;
+    if (isPaused) {
+      Graph.pauseAnimation();
+      e.target.textContent = '⏸ Paused';
+      e.target.classList.remove('active');
+    } else {
+      Graph.resumeAnimation();
+      e.target.textContent = '▶ Running';
+      e.target.classList.add('active');
+    }
+  });
+
+  // Node size slider
+  document.getElementById('node-size').addEventListener('input', (e) => {
+    nodeScale = parseFloat(e.target.value);
+    document.getElementById('node-size-value').textContent = nodeScale.toFixed(1);
+    Graph.nodeCanvasObject(Graph.nodeCanvasObject()); // Force redraw
+  });
+
+  // Link distance slider
+  document.getElementById('link-distance').addEventListener('input', (e) => {
+    linkDistance = parseInt(e.target.value);
+    document.getElementById('link-distance-value').textContent = linkDistance;
+    Graph.d3Force('link').distance(linkDistance);
+    Graph.d3ReheatSimulation();
+  });
+
+  // Full screen toggle
+  document.getElementById('fullscreen-toggle').addEventListener('click', () => {
+    const explorer = document.getElementById('graph-explorer');
+    if (!document.fullscreenElement) {
+      explorer.requestFullscreen().catch(err => {
+        console.log('Fullscreen error:', err);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  });
+
+  // =========================================================================
+  // Entity Type Filters
+  // =========================================================================
+
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const type = chip.dataset.type;
+
+      if (type === 'all') {
+        // Reset to show all
+        activeFilters.clear();
+        activeFilters.add('all');
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      } else {
+        // Toggle individual filter
+        document.querySelector('.filter-chip[data-type="all"]').classList.remove('active');
+        activeFilters.delete('all');
+
+        if (activeFilters.has(type)) {
+          activeFilters.delete(type);
+          chip.classList.remove('active');
+        } else {
+          activeFilters.add(type);
+          chip.classList.add('active');
+        }
+
+        // If no filters active, show all
+        if (activeFilters.size === 0) {
+          activeFilters.add('all');
+          document.querySelector('.filter-chip[data-type="all"]').classList.add('active');
+        }
+      }
+
+      // Apply filter
+      applyFilters();
+    });
+  });
+
+  function applyFilters() {
+    if (activeFilters.has('all')) {
+      Graph.graphData(JSON.parse(JSON.stringify(originalData)));
+    } else {
+      const filteredNodes = originalData.nodes.filter(node => {
+        const type = getEntityType(node);
+        return activeFilters.has(type);
+      });
+      const nodeIds = new Set(filteredNodes.map(n => n.id));
+      const filteredLinks = originalData.links.filter(link => {
+        const s = typeof link.source === 'object' ? link.source.id : link.source;
+        const t = typeof link.target === 'object' ? link.target.id : link.target;
+        return nodeIds.has(s) && nodeIds.has(t);
+      });
+
+      Graph.graphData({ nodes: filteredNodes, links: filteredLinks });
+    }
+
+    // Update stats
+    const data = Graph.graphData();
+    document.getElementById('graph-stats').innerHTML =
+      `<strong>${data.nodes.length}</strong> entities • <strong>${data.links.length}</strong> connections`;
+
+    setTimeout(() => Graph.zoomToFit(400, 60), 300);
+  }
+
+  // =========================================================================
+  // Search
+  // =========================================================================
+
+  const searchInput = document.getElementById('node-search');
+  const searchDropdown = document.getElementById('search-results-dropdown');
+
+  searchInput.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase().trim();
+
+    if (query.length < 2) {
+      searchDropdown.style.display = 'none';
+      searchHighlight = null;
+      return;
+    }
+
+    const matches = originalData.nodes.filter(node => {
+      const title = (node.title || node.name || node.id || '').toLowerCase();
+      return title.includes(query);
+    }).slice(0, 10);
+
+    if (matches.length > 0) {
+      searchDropdown.innerHTML = matches.map(node => `
+        <div class="search-result-item" data-id="${node.id}">
+          <span class="search-result-dot" style="background: ${getEntityTypeColor(node)};"></span>
+          ${htmlDecode(node.title || node.name || node.id)}
+        </div>
+      `).join('');
+      searchDropdown.style.display = 'block';
+
+      // Add click handlers
+      searchDropdown.querySelectorAll('.search-result-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const nodeId = item.dataset.id;
+          const node = originalData.nodes.find(n => n.id === nodeId);
+          if (node) {
+            searchHighlight = node;
+            Graph.centerAt(node.x, node.y, 500);
+            Graph.zoom(2, 500);
+            searchDropdown.style.display = 'none';
+            searchInput.value = htmlDecode(node.title || node.name || node.id);
+          }
+        });
+      });
+    } else {
+      searchDropdown.innerHTML = '<div class="search-no-results">No results found</div>';
+      searchDropdown.style.display = 'block';
+    }
+  });
+
+  // Close dropdown on outside click
+  document.addEventListener('click', (e) => {
+    if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+      searchDropdown.style.display = 'none';
+    }
+  });
+
+  // =========================================================================
+  // Legend
+  // =========================================================================
+
+  document.getElementById('legend-toggle').addEventListener('click', () => {
+    const legend = document.getElementById('graph-legend');
+    legend.classList.toggle('visible');
+  });
+
+  document.getElementById('legend-close').addEventListener('click', () => {
+    document.getElementById('graph-legend').classList.remove('visible');
+  });
+
+  // =========================================================================
+  // Resize Handler
+  // =========================================================================
+
+  window.addEventListener('resize', () => {
+    Graph.width(container.clientWidth);
+    Graph.height(container.clientHeight);
+  });
+
+  // Handle fullscreen change
+  document.addEventListener('fullscreenchange', () => {
+    setTimeout(() => {
+      Graph.width(container.clientWidth);
+      Graph.height(container.clientHeight);
+      Graph.zoomToFit(400, 60);
+    }, 100);
+  });
+
+})();
+</script>

@@ -1,0 +1,96 @@
+{#
+  Related Entities Component
+  Displays a list of related entities with type badges
+
+  Usage:
+  {% include "components/relatedEntities.njk" %}
+
+  This component extracts related entities from the note's backlinks
+  and wiki links, organizing them by entity type.
+
+  Alternatively, pass explicit relations:
+  {% include "components/relatedEntities.njk" with {
+    relations: [
+      {name: 'Vitamin D', type: 'supplement', url: '/notes/vitamin-d/'},
+      {name: 'Bone Health', type: 'condition', url: '/notes/bone-health/'}
+    ]
+  } %}
+#}
+
+{% set entityIcons = {
+  'biomarker': '🧪',
+  'drug': '💊',
+  'supplement': '🌿',
+  'condition': '🏥',
+  'intervention': '⚕️',
+  'hormone': '🧬',
+  'organ': '🫀',
+  'metabolite': '⚙️',
+  'gene': '🧬',
+  'protein': '🔬',
+  'neurotransmitter': '⚡',
+  'cellularcomponent': '🔬'
+} %}
+
+{# Use provided relations or fall back to backlinks #}
+{% set entityRelations = relations or [] %}
+{% set hasRelations = entityRelations.length > 0 %}
+
+{# If no explicit relations, try to extract from backlinks #}
+{% if not hasRelations and backlinks %}
+  {% for backlink in backlinks %}
+    {% set backlinkType = backlink.data['dg-entity-type'] or backlink.data.type %}
+    {% if backlinkType %}
+      {% set entityRelations = entityRelations.concat([{
+        name: backlink.data.title or backlink.fileSlug,
+        type: backlinkType,
+        url: backlink.url,
+        description: backlink.data.description
+      }]) %}
+    {% endif %}
+  {% endfor %}
+  {% set hasRelations = entityRelations.length > 0 %}
+{% endif %}
+
+{% if hasRelations %}
+<div class="related-entities">
+  <div class="related-header">
+    <h4>
+      <i icon-name="network"></i>
+      Related Entities
+    </h4>
+    <span class="related-count">{{ entityRelations.length }}</span>
+  </div>
+
+  <div class="related-list">
+    {% for relation in entityRelations | slice(0, 10) %}
+    <a href="{{ relation.url }}" class="related-item" data-entity-type="{{ relation.type | lower }}">
+      <span class="related-icon">
+        {{ entityIcons[relation.type | lower] or '📄' }}
+      </span>
+      <div class="related-info">
+        <span class="related-name">{{ relation.name }}</span>
+        {% if relation.type %}
+        <span class="related-type">{{ relation.type | capitalize }}</span>
+        {% endif %}
+      </div>
+      {% if relation.type %}
+      <span class="related-badge">
+        <span class="entity-badge small {{ relation.type | lower }}">
+          {{ relation.type | capitalize }}
+        </span>
+      </span>
+      {% endif %}
+    </a>
+    {% endfor %}
+
+    {% if entityRelations.length > 10 %}
+    <div class="related-more">
+      <span class="text-muted">
+        + {{ entityRelations.length - 10 }} more related entities
+      </span>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endif %}

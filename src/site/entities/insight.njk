@@ -1,0 +1,24 @@
+---
+title: Insights
+permalink: /entities/insight/
+---
+
+<div class="entity-index">
+  <h1>✨ Insights</h1>
+  <p class="entity-description">Aha moments, realizations, and personal discoveries</p>
+
+  <div class="entity-list">
+    {%- for note in collections.note -%}
+      {%- if note.data.tags and 'insight' in note.data.tags -%}
+        <div class="entity-item insight">
+          <a href="{{ note.url }}">{{ note.data.title or note.fileSlug }}</a>
+          {%- if note.data.description -%}
+            <span class="entity-desc">{{ note.data.description }}</span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  <p class="back-link"><a href="/entities/">← Back to Categories</a></p>
+</div>

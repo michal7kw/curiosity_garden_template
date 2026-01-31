@@ -1,0 +1,201 @@
+---
+title: Search
+layout: layouts/note.njk
+permalink: /search/
+eleventyExcludeFromCollections: true
+---
+
+<div class="search-page">
+  <h1>Search the Knowledge Garden</h1>
+  <p class="search-description">Find entities, notes, and relationships across the knowledge base</p>
+
+  <div class="search-input-container">
+    <input type="text" id="search-input" class="search-input" placeholder="Type to search..." autofocus>
+    <span class="search-hint">Press Enter to search</span>
+  </div>
+
+  <div id="search-loading" class="search-loading" style="display: none;">
+    <div class="loading-spinner"></div>
+    <span>Loading search index...</span>
+  </div>
+
+  <div id="search-results" class="search-results"></div>
+
+  <div class="search-tips">
+    <h3>Search Tips</h3>
+    <ul>
+      <li>Search by entity name (e.g., "Vitamin D", "Metformin")</li>
+      <li>Search by entity type (e.g., "supplement", "drug", "condition")</li>
+      <li>Search by tag using # (e.g., "#bone-health")</li>
+      <li>Use partial matches for broader results</li>
+    </ul>
+  </div>
+
+  <p class="back-link"><a href="/">← Back to Home</a></p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js"></script>
+<script>
+(async function() {
+  const searchInput = document.getElementById('search-input');
+  const resultsContainer = document.getElementById('search-results');
+  const loadingEl = document.getElementById('search-loading');
+
+  let searchIndex = null;
+  let searchDocs = [];
+
+  // Show loading
+  loadingEl.style.display = 'flex';
+
+  // Load search index
+  try {
+    const searchIndexDate = '{{ meta.buildDate | isoDate }}';
+
+    // Check localStorage cache
+    if (localStorage.getItem('searchIndex')) {
+      const cached = JSON.parse(localStorage.getItem('searchIndex'));
+      if (cached.date === searchIndexDate) {
+        searchDocs = cached.docs;
+      }
+    }
+
+    // Fetch if not cached
+    if (searchDocs.length === 0) {
+      searchDocs = await fetch('/searchIndex.json?v=' + searchIndexDate).then(res => res.json());
+      localStorage.setItem('searchIndex', JSON.stringify({ date: searchIndexDate, docs: searchDocs }));
+    }
+
+    // Create FlexSearch index
+    searchIndex = new FlexSearch.Document({
+      document: {
+        id: 'id',
+        index: ['title', 'content', 'tags'],
+        store: ['title', 'url', 'content', 'tags', 'entityType']
+      },
+      tokenize: 'forward',
+      resolution: 9
+    });
+
+    // Add documents to index
+    searchDocs.forEach((doc, i) => {
+      searchIndex.add({
+        id: i,
+        title: doc.title || '',
+        content: doc.content || '',
+        tags: (doc.tags || []).join(' '),
+        url: doc.url || '',
+        entityType: doc.entityType || doc.type || ''
+      });
+    });
+
+    loadingEl.style.display = 'none';
+  } catch (err) {
+    loadingEl.innerHTML = '<span style="color: var(--text-error);">Failed to load search index</span>';
+    console.error('Search index error:', err);
+  }
+
+  // Entity type colors
+  const entityTypeColors = {
+    biomarker: '#4CAF50',
+    drug: '#2196F3',
+    supplement: '#9C27B0',
+    condition: '#FF9800',
+    intervention: '#00BCD4',
+    hormone: '#E91E63',
+    organ: '#795548',
+    protein: '#3F51B5',
+    default: '#888888'
+  };
+
+  function getEntityColor(type) {
+    return entityTypeColors[type?.toLowerCase()] || entityTypeColors.default;
+  }
+
+  function performSearch() {
+    const query = searchInput.value.trim();
+
+    if (!query || !searchIndex) {
+      resultsContainer.innerHTML = '';
+      return;
+    }
+
+    // Search across all fields
+    const results = searchIndex.search(query, { limit: 50, enrich: true });
+
+    // Flatten and dedupe results
+    const seen = new Set();
+    const matches = [];
+
+    results.forEach(fieldResult => {
+      fieldResult.result.forEach(item => {
+        if (!seen.has(item.id)) {
+          seen.add(item.id);
+          matches.push(searchDocs[item.id]);
+        }
+      });
+    });
+
+    if (matches.length === 0) {
+      resultsContainer.innerHTML = `
+        <div class="no-results">
+          <p>No results found for "<strong>${query}</strong>"</p>
+          <p>Try a different search term or check your spelling.</p>
+        </div>
+      `;
+      return;
+    }
+
+    resultsContainer.innerHTML = `
+      <div class="results-count">${matches.length} result${matches.length !== 1 ? 's' : ''} found</div>
+      <div class="results-list">
+        ${matches.map(doc => `
+          <a href="${doc.url}" class="result-item">
+            <div class="result-header">
+              <span class="result-title">${doc.title || 'Untitled'}</span>
+              ${doc.entityType || doc.type ? `
+                <span class="result-type" style="background: ${getEntityColor(doc.entityType || doc.type)};">
+                  ${doc.entityType || doc.type}
+                </span>
+              ` : ''}
+            </div>
+            ${doc.content ? `
+              <div class="result-excerpt">${doc.content.substring(0, 150)}${doc.content.length > 150 ? '...' : ''}</div>
+            ` : ''}
+            ${doc.tags && doc.tags.length ? `
+              <div class="result-tags">
+                ${doc.tags.slice(0, 5).map(tag => `<span class="result-tag">#${tag}</span>`).join('')}
+              </div>
+            ` : ''}
+          </a>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  // Debounce function
+  function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+  }
+
+  // Event listeners
+  searchInput.addEventListener('input', debounce(performSearch, 300));
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      performSearch();
+    }
+  });
+
+  // Check for query param
+  const urlParams = new URLSearchParams(window.location.search);
+  const queryParam = urlParams.get('q');
+  if (queryParam) {
+    searchInput.value = queryParam;
+    // Wait for index to load
+    setTimeout(performSearch, 500);
+  }
+})();
+</script>

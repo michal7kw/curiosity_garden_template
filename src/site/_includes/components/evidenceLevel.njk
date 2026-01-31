@@ -1,0 +1,158 @@
+{#
+  Evidence Level Component
+  Displays the strength of evidence for health claims
+
+  Usage:
+  {% include "components/evidenceLevel.njk" with {level: 'high'} %}
+  {% include "components/evidenceLevel.njk" with {numericLevel: 4} %}
+
+  Parameters:
+  - level: 'high', 'moderate', 'low', or 'insufficient' (string-based)
+  - numericLevel: 0-5 numeric scale (alternative to level)
+  - showLabel: Whether to show text label (default: true)
+  - showDots: Whether to show visual dots (default: true)
+  - showStars: Whether to show star rating for numeric levels (default: true)
+#}
+
+{% set showLabelFlag = showLabel | default(true) %}
+{% set showDotsFlag = showDots | default(true) %}
+{% set showStarsFlag = showStars | default(true) %}
+
+{# Evidence level configurations for string-based levels #}
+{% set evidenceConfig = {
+  'high': {
+    'icon': '✓✓✓',
+    'label': 'Strong Evidence',
+    'description': 'Well-supported by multiple high-quality studies',
+    'dots': 3
+  },
+  'moderate': {
+    'icon': '✓✓',
+    'label': 'Moderate Evidence',
+    'description': 'Supported by several studies with some limitations',
+    'dots': 2
+  },
+  'low': {
+    'icon': '✓',
+    'label': 'Limited Evidence',
+    'description': 'Based on preliminary research or small studies',
+    'dots': 1
+  },
+  'insufficient': {
+    'icon': '?',
+    'label': 'Insufficient Evidence',
+    'description': 'Not enough research to draw conclusions',
+    'dots': 0
+  }
+} %}
+
+{# Numeric level configurations (0-5 scale) #}
+{% set numericEvidenceConfig = {
+  5: {
+    'label': 'Strong Evidence',
+    'description': 'Multiple large RCTs and meta-analyses',
+    'class': 'high'
+  },
+  4: {
+    'label': 'Good Evidence',
+    'description': 'RCTs and meta-analyses with consistent results',
+    'class': 'high'
+  },
+  3: {
+    'label': 'Moderate Evidence',
+    'description': 'Some RCTs with mixed or limited results',
+    'class': 'moderate'
+  },
+  2: {
+    'label': 'Limited Evidence',
+    'description': 'Mostly observational studies',
+    'class': 'low'
+  },
+  1: {
+    'label': 'Preliminary Evidence',
+    'description': 'Animal/cell studies or very limited human data',
+    'class': 'low'
+  },
+  0: {
+    'label': 'Insufficient Evidence',
+    'description': 'Traditional use only, no clinical evidence',
+    'class': 'insufficient'
+  }
+} %}
+
+{# Handle numeric level (0-5 scale) #}
+{% if numericLevel is defined and numericLevel is number %}
+  {% set evidenceNum = numericLevel | int %}
+  {% if evidenceNum > 5 %}{% set evidenceNum = 5 %}{% endif %}
+  {% if evidenceNum < 0 %}{% set evidenceNum = 0 %}{% endif %}
+
+  {% set numConfig = numericEvidenceConfig[evidenceNum] or numericEvidenceConfig[0] %}
+
+  <div class="evidence-level {{ numConfig.class }}"
+       title="{{ numConfig.description }}"
+       data-evidence-numeric="{{ evidenceNum }}">
+
+    <span class="evidence-icon">
+      {% if evidenceNum >= 4 %}
+        <i icon-name="check-circle-2"></i>
+      {% elif evidenceNum >= 3 %}
+        <i icon-name="check-circle"></i>
+      {% elif evidenceNum >= 1 %}
+        <i icon-name="alert-circle"></i>
+      {% else %}
+        <i icon-name="help-circle"></i>
+      {% endif %}
+    </span>
+
+    {% if showLabelFlag %}
+    <span class="evidence-label">{{ numConfig.label }}</span>
+    {% endif %}
+
+    {% if showStarsFlag %}
+    <span class="evidence-stars" aria-label="{{ evidenceNum }} out of 5">
+      {% for i in range(5) %}
+        {% if i < evidenceNum %}
+          <span class="star filled">★</span>
+        {% else %}
+          <span class="star empty">☆</span>
+        {% endif %}
+      {% endfor %}
+      <span class="evidence-numeric">({{ evidenceNum }}/5)</span>
+    </span>
+    {% endif %}
+  </div>
+
+{# Handle string-based level #}
+{% else %}
+  {% set evidenceLevel = level | default('moderate') | lower %}
+  {% set config = evidenceConfig[evidenceLevel] or evidenceConfig['moderate'] %}
+
+  <div class="evidence-level {{ evidenceLevel }}"
+       title="{{ config.description }}"
+       data-evidence="{{ evidenceLevel }}">
+
+    <span class="evidence-icon">
+      {% if evidenceLevel == 'high' %}
+        <i icon-name="check-circle-2"></i>
+      {% elif evidenceLevel == 'moderate' %}
+        <i icon-name="check-circle"></i>
+      {% elif evidenceLevel == 'low' %}
+        <i icon-name="alert-circle"></i>
+      {% else %}
+        <i icon-name="help-circle"></i>
+      {% endif %}
+    </span>
+
+    {% if showLabelFlag %}
+    <span class="evidence-label">{{ config.label }}</span>
+    {% endif %}
+
+    {% if showDotsFlag %}
+    <span class="evidence-dots">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </span>
+    {% endif %}
+  </div>
+{% endif %}

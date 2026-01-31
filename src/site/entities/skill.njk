@@ -1,0 +1,24 @@
+---
+title: Skills
+permalink: /entities/skill/
+---
+
+<div class="entity-index">
+  <h1>🎯 Skills</h1>
+  <p class="entity-description">Abilities to develop, track, and master over time</p>
+
+  <div class="entity-list">
+    {%- for note in collections.note -%}
+      {%- if note.data.tags and 'skill' in note.data.tags -%}
+        <div class="entity-item skill">
+          <a href="{{ note.url }}">{{ note.data.title or note.fileSlug }}</a>
+          {%- if note.data.description -%}
+            <span class="entity-desc">{{ note.data.description }}</span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  <p class="back-link"><a href="/entities/">← Back to Categories</a></p>
+</div>

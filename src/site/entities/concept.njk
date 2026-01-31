@@ -1,0 +1,24 @@
+---
+title: Concepts
+permalink: /entities/concept/
+---
+
+<div class="entity-index">
+  <h1>💡 Concepts</h1>
+  <p class="entity-description">Core ideas, mental models, and fundamental principles</p>
+
+  <div class="entity-list">
+    {%- for note in collections.note -%}
+      {%- if note.data.tags and 'concept' in note.data.tags -%}
+        <div class="entity-item concept">
+          <a href="{{ note.url }}">{{ note.data.title or note.fileSlug }}</a>
+          {%- if note.data.description -%}
+            <span class="entity-desc">{{ note.data.description }}</span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  <p class="back-link"><a href="/entities/">← Back to Categories</a></p>
+</div>
